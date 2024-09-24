@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 class PCCP_1번_붕대_감기 {
     public static void main(String[] args) {
-        var solution = new Solution();
+        var solution = new Solution_PCCP_1();
 
         var bandage = new int[]{5, 1, 5};
         var health = 30;
@@ -18,7 +18,7 @@ class PCCP_1번_붕대_감기 {
     }
 }
 
-class Solution {
+class Solution_PCCP_1 {
     public int solution(int[] bandage, int health, int[][] attacks) {
         var player = new GameCharacter(health, new Bandage(bandage[0], bandage[1], bandage[2]));
         var game = new Game(player, attacks);
