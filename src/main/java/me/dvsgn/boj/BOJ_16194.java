@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
-public class BOJ_11052 {
+public class BOJ_16194 {
     private static int[] D;
     private static int[] P;
 
@@ -18,12 +18,15 @@ public class BOJ_11052 {
 
         var st = new StringTokenizer(br.readLine(), " ");
         for (int i = 1; i <= N; i++) {
-            P[i] = Integer.parseInt(st.nextToken());
+            var value = Integer.parseInt(st.nextToken());
+            P[i] = value;
+            D[i] = value;
+
         }
 
         for (int i = 1; i <= N; i++) {
             for (int j = 1; j <= i; j++) {
-                D[i] = Math.max(D[i], D[i - j] + P[j]);
+                D[i] = Math.min(D[i], D[i - j] + P[j]);
             }
         }
 
