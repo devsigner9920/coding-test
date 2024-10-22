@@ -1,65 +1,124 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
+
 public class Main {
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        char[][] a = new char[n][8];
-        for (int i=0; i<n; i++) {
-            a[i] = sc.next().toCharArray();
+    private static int N;
+
+    public static void main(String[] args) throws IOException {
+        var br = new BufferedReader(new InputStreamReader(System.in));
+
+        N = Integer.parseInt(br.readLine());
+
+        List<Gear> gearList = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            var chars = br.readLine().toCharArray();
+            List<Integer> integers = new ArrayList<>();
+            for (char c : chars) {
+                integers.add(Character.getNumericValue(c));
+            }
+            gearList.add(new Gear(integers));
         }
-        int k = sc.nextInt();
-        while (k-- > 0) {
-            int no = sc.nextInt()-1;
-            int dir = sc.nextInt();
-            // 각각의 톱니는 동시에 회전해야 하기 때문에
-            // 먼저, 각 톱니가 어떤 방향으로 회전해야 하는지 구하자
-            int[] d = new int[n];
-            d[no] = dir;
-            // 왼쪽 톱니를 연쇄적으로 구하고
-            for (int i=no-1; i>=0; i--) {
-                if (a[i][2] != a[i+1][6]) {
-                    d[i] = -d[i+1];
-                } else {
-                    // 한 톱니가 회전하지 않으면
-                    // 그 톱니의 왼쪽에 있는 톱니도 회전하지 않는다.
-                    break;
-                }
-            }
-            // 오른쪽 톱니를 연쇄적으로 구하고
-            for (int i=no+1; i<n; i++) {
-                if (a[i-1][2] != a[i][6]) {
-                    d[i] = -d[i-1];
-                } else {
-                    // 한 톱니가 회전하지 않으면
-                    // 그 톱니의 오른쪽에 있는 톱니도 회전하지 않는다.
-                    break;
-                }
-            }
-            for (int i=0; i<n; i++) {
-                if (d[i] == 0) continue;
-                if (d[i] == 1) {
-                    // 시계 방향 회전
-                    char temp = a[i][7];
-                    for (int j=7; j>=1; j--) {
-                        a[i][j] = a[i][j-1];
-                    }
-                    a[i][0] = temp;
-                } else if (d[i] == -1) {
-                    // 반시계 방향 회전
-                    char temp = a[i][0];
-                    for (int j=0; j<7; j++) {
-                        a[i][j] = a[i][j+1];
-                    }
-                    a[i][7] = temp;
-                }
-            }
+
+        var gears = new Gears(gearList);
+
+        var commandCount = Integer.parseInt(br.readLine());
+        StringTokenizer st;
+        for (int i = 0; i < commandCount; i++) {
+            st = new StringTokenizer(br.readLine());
+            var gearIndex = Integer.parseInt(st.nextToken());
+            var direction = Integer.parseInt(st.nextToken());
+
+            gears.rotate(gearIndex, direction, N);
         }
-        int ans = 0;
-        for (int i=0; i<n; i++) {
-            if (a[i][0] == '1') {
-                ans += 1;
+
+        gears.sout();
+    }
+}
+
+class Gears {
+    private final List<Gear> gears;
+
+    Gears(List<Gear> gears) {
+        this.gears = gears;
+    }
+
+    public void rotate(int gearIndex, int direction, int n) {
+        var index = gearIndex - 1;
+        int[] directions = new int[n]; // 각 기어의 회전 방향을 저장할 배열
+        directions[index] = direction;
+
+        // 왼쪽 기어들의 회전 방향 설정
+        for (int i = index - 1; i >= 0; i--) {
+            var currentGear = gears.get(i + 1);
+            var leftGear = gears.get(i);
+
+            if (currentGear.getLeft() != leftGear.getRight()) {
+                directions[i] = -directions[i + 1];
+            } else {
+                break;
             }
         }
-        System.out.println(ans);
+
+        // 오른쪽 기어들의 회전 방향 설정
+        for (int i = index + 1; i < n; i++) {
+            var currentGear = gears.get(i - 1);
+            var rightGear = gears.get(i);
+
+            if (currentGear.getRight() != rightGear.getLeft()) {
+                directions[i] = -directions[i - 1];
+            } else {
+                break;
+            }
+        }
+
+        // 각 기어를 회전 방향에 따라 회전
+        for (int i = 0; i < n; i++) {
+            if (directions[i] != 0) {
+                gears.get(i).rotate(directions[i]);
+            }
+        }
+    }
+
+    public void sout() {
+        var count = 0;
+        for (Gear gear : gears) {
+            if (gear.isS()) {
+                count++;
+            }
+        }
+
+        System.out.println(count);
+    }
+}
+
+class Gear {
+    private final List<Integer> gear;
+
+    Gear(List<Integer> gear) {
+        this.gear = gear;
+    }
+
+    public int getLeft() {
+        return gear.get(6);
+    }
+
+    public int getRight() {
+        return gear.get(2);
+    }
+
+    public void rotate(Integer direct) {
+        if (direct == 1) {
+            gear.add(0, gear.remove(7)); // 시계 방향 회전
+        }
+
+        if (direct == -1) {
+            gear.add(gear.remove(0)); // 반시계 방향 회전
+        }
+    }
+
+    public boolean isS() {
+        return gear.get(0) == 1;
     }
 }
