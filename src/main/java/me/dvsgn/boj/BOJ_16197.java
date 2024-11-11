@@ -12,6 +12,8 @@ public class BOJ_16197 {
     private static char[][] s;
     private static int[] dx = new int[]{0, 0, 1, -1};
     private static int[] dy = new int[]{1, -1, 0, 0};
+//    private static int[]
+    private static boolean[][] check;
     public static void main(String[] args) throws IOException {
         var br = new BufferedReader(new InputStreamReader(System.in));
         var st = new StringTokenizer(br.readLine());
@@ -38,6 +40,7 @@ public class BOJ_16197 {
                 }
             }
         }
+        check = new boolean[s.length][s[0].length];
         var coins = new Coin_16197[2];
         var coinIndex = 0;
         for (int i = 0; i < s.length; i++) {
@@ -51,20 +54,26 @@ public class BOJ_16197 {
 
         System.out.println(Arrays.deepToString(s));
 
-        bf(coins, 0, 0);
+        bf(coins, 0, 0, 0);
     }
 
-    public static void bf(Coin_16197[] coins, int x, int y) {
+    public static void bf(Coin_16197[] coins, int x, int y, int count) {
+        if (count == 11) {
+
+            return;
+        }
         var coin1 = coins[0];
         var coin2 = coins[1];
 
-        var coin1X = coin1.x + x;
-        var coin1Y = coin1.y + y;
+        coin1.x += x;
+        coin1.y += y;
+        coin2.x += x;
+        coin2.y += y;
 
-        var coin2X = coin2.x + x;
-        var coin2Y = coin2.y + y;
 
-//        if (coin1X == 0 && coin2X == )
+        for (int i = 0; i < 4; i++) {
+            bf(coins, dx[i], dy[i], count++);
+        }
     }
 }
 
