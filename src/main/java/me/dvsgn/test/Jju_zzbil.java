@@ -9,7 +9,7 @@ public class Jju_zzbil {
         int[] cost = {4, 3, 9, 3, 1};
         int k = 2;
 
-        System.out.println(getMinimumCost(Arrays.stream(cost).boxed().toList(), 2));
+        System.out.println(getMinimumCost(Arrays.stream(cost).boxed().collect(Collectors.toList()), 2));
     }
 
     public static long getMinimumCost(List<Integer> cost, int k) {
