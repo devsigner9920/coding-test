@@ -1,6 +1,46 @@
 package me.dvsgn.leetcode;
 
+import java.util.Map;
+import java.util.*;
+
 public class LeetCode_124 {
+    public static int bestSumDownwardTreePath(List<Integer> parent, List<Integer> values) {
+        int n = parent.size();
+        Map<Integer, List<Integer>> tree = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            tree.put(i, new ArrayList<>());
+        }
+        int root = -1;
+        for (int i = 0; i < n; i++) {
+            int p = parent.get(i);
+            if (p == -1) {
+                root = i;
+            } else {
+                tree.get(p).add(i);
+            }
+        }
+        int[] maxSum = new int[] { Integer.MIN_VALUE };
+        dfs(root, values, tree, maxSum);
+        return maxSum[0];
+    }
+
+    private static int dfs(int node, List<Integer> values, Map<Integer, List<Integer>> tree, int[] maxSum) {
+        int maxChildSum = 0;
+        for (int child : tree.get(node)) {
+            int childSum = dfs(child, values, tree, maxSum);
+            if (childSum > maxChildSum) {
+                maxChildSum = childSum;
+            }
+        }
+        int currentSum = values.get(node);
+        if (maxChildSum > 0) {
+            currentSum += maxChildSum;
+        }
+        if (currentSum > maxSum[0]) {
+            maxSum[0] = currentSum;
+        }
+        return currentSum;
+    }
 }
 
 /**
